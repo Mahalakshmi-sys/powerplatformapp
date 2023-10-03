@@ -19,50 +19,49 @@ on:
         description: 'staging the unpacked solution folder before check-in *do not change*'
         required: true
         default: out/solutions/
-      solution_target_folder: 
+      solution_target_folder:
        description: 'folder name to be created and checked in *do not change*'
        required: true
        default: solutions/
+
 env:
 #edit your values here
-  ENVIRONMENT_URL: 'https://org53403089.crm8.dynamics.com/'
-  CLIENT_ID: '4f8a009b-be21-4d93-a2f6-28a6577a2614'
-  TENANT_ID: '406f6fb2-e087-4d29-9642-817873fddc4c'
+  ENVIRONMENT_URL: https://org53403089.crm8.dynamics.com/
+  USERNAME: Mahalakshmi Anant
+
 permissions:
   contents: write
+
 jobs:
   export-from-dev:
     runs-on: windows-latest
-    # or you can say runs-on: ubuntu-latest
     env:
       RUNNER_DEBUG: 1
 
     steps:
-    - uses: actions/checkout@v
+    - uses: actions/checkout@v2
       with:
         lfs: true
 
-    - name: Mahalakshmi
-      uses: Mahalakshmi-sys/powerplatformapp/who-am-i@v
+    - name: powerplatformapp
+      uses: Mahalakshmi-sys/powerplatformapp/powerplatformapp@v0
       with:
         environment-url: ${{env.ENVIRONMENT_URL}}
-        app-id: ${{env.CLIENT_ID}}
-        client-secret: ${{ secrets.powerplatformsecert }}
-        tenant-id: ${{env.TENANT_ID}}
-
+        user-name: ${{env.USERNAME}}
+        password-secret: ${{ secrets.password }}
 
     - name: export-solution action
-      uses: Mahalakshmi-sys/powerplatformapp/export-solution@v
+      uses: Mahalakshmi-sys/powerplatformapp/export-solution@v0
       with:
         environment-url: ${{env.ENVIRONMENT_URL}}
-        app-id: ${{env.CLIENT_ID}}
-        client-secret: ${{ secrets.powerplatformsecert }}
-        tenant-id: ${{env.TENANT_ID}}
+        user-name: ${{env.USERNAME}}
+        password-secret: ${{ secrets.password }}
         solution-name: ${{ github.event.inputs.solution_name }}
         solution-output-file: ${{ github.event.inputs.solution_exported_folder}}/${{ github.event.inputs.solution_name }}.zip
 
+
     - name: unpack-solution action
-      uses: Mahalakshmi-sys/powerplatformapp/unpack-solution@v
+      uses: Mahalakshmi-sys/powerplatformapp/unpack-solution@v0
       with:
         solution-file: ${{ github.event.inputs.solution_exported_folder}}/${{ github.event.inputs.solution_name }}.zip
         solution-folder: ${{ github.event.inputs.solution_folder}}/${{ github.event.inputs.solution_name }}
@@ -70,7 +69,7 @@ jobs:
         overwrite-files: true
 
     - name: branch-solution, prepare it for a PullRequest
-      uses: Mahalakshmi-sys/powerplatformapp/branch-solution@v
+      uses: Mahalakshmi-sys/powerplatformapp/branch-solution@v0
       with:
         solution-folder: ${{ github.event.inputs.solution_folder}}/${{ github.event.inputs.solution_name }}
         solution-target-folder: ${{ github.event.inputs.solution_target_folder}}/${{ github.event.inputs.solution_name }}
